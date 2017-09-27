@@ -24,9 +24,11 @@ class Card extends Component<CardProps, {}> {
     super(props);
 
     this.cardStyles = {
-      width: `${this.props.width}px`,
-      height: `${this.props.height}px`,
+      width: `${this.props.width! + 10}px`,
+      height: `${this.props.height! + 10}px`,
       borderRadius: '10px',
+      padding: '5px',
+      backgroundColor: 'transparent',
     };
   }
 
@@ -38,8 +40,15 @@ class Card extends Component<CardProps, {}> {
         zDepth={1}
         onMouseOver={this.props.onMouseOver}
         onMouseOut={this.props.onMouseOut}
+        onDragOver={this.props.onMouseOver}
+        onDragLeave={this.props.onMouseOut}
       >
-        <img width={this.props.width} height={this.props.height} src="/placeholder_card.jpeg" />
+        <img
+          width={this.props.width}
+          height={this.props.height}
+          style={{margin: 'auto'}}
+          src="/placeholder_card.jpeg"
+        />
       </Paper>
     );
   }

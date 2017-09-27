@@ -29,7 +29,7 @@
     "stylus": "^0.54.5"
   },
   "scripts": {
-    "start-ts": "react-scripts-ts start",
+    "start-ts": "PORT=3001 react-scripts-ts start",
     "start": "npm-run-all -p watch-css start-ts",
     "build": "react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom",

@@ -21,30 +21,34 @@ const cardDimensions = {
 };
 
 interface DeckContainerState {
-  containerWidth: number;
+  containerHeight: number;
 }
 
 const CONTAINER_MARGIN = 20;
-const HOVER_CARD_LEFT_MARGIN = 40;
+const HOVER_CARD_TOP_MARGIN = 40;
 const SPACE_BETWEEN_HOVER_CARD_AND_NEXT = 10;
 
+type Props = {
+  deckContainer: DeckContainerStore
+};
+
 @observer
-class DeckContainer extends React.Component<{deckContainer: DeckContainerStore}, DeckContainerState> {
+class DeckContainer extends React.Component<Props, DeckContainerState> {
 
   container: Paper;
 
-  constructor(props: {deckContainer: DeckContainerStore}) {
+  constructor(props: Props) {
     super(props);
 
     this.state = {
-      containerWidth: 0,
+      containerHeight: 0,
     };
   }
 
   componentDidMount() {
-    const containerWidth: number = ReactDOM.findDOMNode<HTMLElement>(this.container).offsetWidth;
+    const containerHeight: number = ReactDOM.findDOMNode<HTMLElement>(this.container).offsetHeight;
     this.setState({
-      containerWidth,
+      containerHeight,
     });
   }
 
@@ -58,36 +62,36 @@ class DeckContainer extends React.Component<{deckContainer: DeckContainerStore},
     this.props.deckContainer.hoverIndex = -1;
   }
 
-  adjustContainerWidthForHoveredCards(containerWidthForCards: number) {
+  adjustContainerHeightForHoveredCards(containerHeightForCards: number) {
     const cardCount = this.props.deckContainer.cards.length;
     const hoverIndex = this.props.deckContainer.hoverIndex;
 
     /*
      * Last card stays in place while hovering any card, so while any other card is hovered,
-     * we remove the last card width from the container width. This is to avoid cards pushing
+     * we remove the last card height from the container height. This is to avoid cards pushing
      * through the right border.
      */
     if (hoverIndex !== (cardCount - 1)) {
-      containerWidthForCards -= (cardDimensions.width - (HOVER_CARD_LEFT_MARGIN - SPACE_BETWEEN_HOVER_CARD_AND_NEXT));
+      containerHeightForCards -= (cardDimensions.height - (HOVER_CARD_TOP_MARGIN - SPACE_BETWEEN_HOVER_CARD_AND_NEXT));
     }
 
     /*
      * Previous card from the hovered one is shown a bit more than the rest so we need to remove
-     * that margin from the container width.
+     * that margin from the container height.
      */
     if (hoverIndex !== 0) {
-      containerWidthForCards -= HOVER_CARD_LEFT_MARGIN;
+      containerHeightForCards -= HOVER_CARD_TOP_MARGIN;
     }
 
-    return containerWidthForCards;
+    return containerHeightForCards;
   }
 
-  adjustVisibleCardSizeForHoveredCards(containerWidthForCards: number) {
+  adjustVisibleCardSizeForHoveredCards(containerHeightForCards: number) {
     /*
      * Last card stays in place while hovering any card, so while some other card is hovered,
      * we adjust the visible card size to be calculated without the last card.
      */
-    return (containerWidthForCards) / (this.props.deckContainer.cards.length - 1);
+    return (containerHeightForCards) / (this.props.deckContainer.cards.length - 1);
   }
 
   calculateAfterHoverMargin(cardsFitArea: boolean, index: number) {
@@ -102,16 +106,16 @@ class DeckContainer extends React.Component<{deckContainer: DeckContainerStore},
        * all cards from hover onwards a bit.
        */
       if (hoverIndex === index && hoverIndex !== 0) {
-        afterHoverMargin += HOVER_CARD_LEFT_MARGIN;
+        afterHoverMargin += HOVER_CARD_TOP_MARGIN;
       }
 
       /*
-       * Hovered card is fully visible so pushing the ones after with card width amount.
+       * Hovered card is fully visible so pushing the ones after with card height amount.
        */
       if (hoverIndex < index) {
-        afterHoverMargin += (cardDimensions.width + SPACE_BETWEEN_HOVER_CARD_AND_NEXT);
+        afterHoverMargin += (cardDimensions.height + SPACE_BETWEEN_HOVER_CARD_AND_NEXT);
         if (hoverIndex === 0) {
-          afterHoverMargin -= HOVER_CARD_LEFT_MARGIN;
+          afterHoverMargin -= HOVER_CARD_TOP_MARGIN;
         }
       }
     }
@@ -124,29 +128,29 @@ class DeckContainer extends React.Component<{deckContainer: DeckContainerStore},
     const cardIsHovered = hoverIndex >= 0;
     let cardsFitArea = true;
 
-    let containerWidthForCards = this.state.containerWidth - (CONTAINER_MARGIN * 2) - cardDimensions.width;
-    let visibleCardSize = containerWidthForCards / (this.props.deckContainer.cards.length - 1);
+    let containerHeightForCards = this.state.containerHeight - (CONTAINER_MARGIN * 2) - cardDimensions.height;
+    let visibleCardSize = containerHeightForCards / (this.props.deckContainer.cards.length - 1);
 
-    cardsFitArea = visibleCardSize > cardDimensions.width;
+    cardsFitArea = visibleCardSize > cardDimensions.height;
 
     if (cardIsHovered && !cardsFitArea) {
-      containerWidthForCards = this.adjustContainerWidthForHoveredCards(containerWidthForCards);
-      visibleCardSize = this.adjustVisibleCardSizeForHoveredCards(containerWidthForCards);
+      containerHeightForCards = this.adjustContainerHeightForHoveredCards(containerHeightForCards);
+      visibleCardSize = this.adjustVisibleCardSizeForHoveredCards(containerHeightForCards);
     }
 
     return this.props.deckContainer.cards.map((card, index) => {
       const afterHoverMargin = this.calculateAfterHoverMargin(cardsFitArea, index);
 
-      const push = visibleCardSize < cardDimensions.width
+      const push = visibleCardSize < cardDimensions.height
         ? visibleCardSize * index
-        : cardDimensions.width * index;
+        : cardDimensions.height * index;
 
       return (
         <DraggableCard
           key={index}
           style={{
             position: 'absolute',
-            left: `${CONTAINER_MARGIN + push + afterHoverMargin}px`,
+            top: `${CONTAINER_MARGIN + push + afterHoverMargin}px`,
           }}
           width={cardDimensions.width}
           height={cardDimensions.height}

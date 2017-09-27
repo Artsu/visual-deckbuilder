@@ -7,7 +7,7 @@ import Card from './Card';
 import { CardProps } from './Card';
 
 const dragSource = {
-  beginDrag() { //props: {}
+  beginDrag() { // props: {}
     return {};
   }
 };
@@ -27,7 +27,7 @@ interface Props extends CardProps {
 }
 
 @DragSource('CARD', dragSource, collect)
-export default class DraggableCard extends Component<Props, ReactElement<any>> {
+export default class DraggableCard extends Component<Props, ReactElement<{}>> {
 
   render(): JSX.Element | null {
     const { connectDragSource, isDragging } = this.props;

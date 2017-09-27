@@ -4,6 +4,7 @@ import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 
 import { AppState } from '../stores/AppState';
+import CardDropTarget from './CardDropTarget';
 import DeckContainer from './DeckContainer';
 
 import './styles/DeckBuilder.css';
@@ -16,8 +17,12 @@ class DeckBuilder extends React.Component<{appState?: AppState}, {}> {
   render(): JSX.Element | null {
     return (
       <div className="deck-builder">
-        <DeckContainer deckContainer={this.props.appState!.deckContainers[0]} />
-        <DeckContainer deckContainer={this.props.appState!.deckContainers[1]} />
+        <CardDropTarget>
+          <DeckContainer deckContainer={this.props.appState!.deckContainers[0]} />
+        </CardDropTarget>
+        <CardDropTarget>
+          <DeckContainer deckContainer={this.props.appState!.deckContainers[1]} />
+        </CardDropTarget>
       </div>
     );
   }
